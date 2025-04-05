@@ -1,0 +1,334 @@
+:root {
+    /* Color Palette */
+    --primary-color: #4CAF50;
+    --secondary-color: #2196F3;
+    --accent-color: #FF9800;
+    --background-color: #F0F4F8;
+    --text-color: #333;
+    --light-text: #FFFFFF;
+
+    /* Gradient Backgrounds */
+    --gradient-primary: linear-gradient(135deg, #4CAF50 0%, #45A049 100%);
+    --gradient-secondary: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    --gradient-accent: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.background-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.background-layers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.layer {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background-color: var(--background-color);
+    top: -50%;
+    left: -50%;
+    opacity: 0.3;
+    animation: layer-move 20s linear infinite alternate;
+}
+
+.layer-1 {
+    background: radial-gradient(circle at 30% 30%, #4CAF50 0%, transparent 50%);
+    animation-delay: -5s;
+}
+
+.layer-2 {
+    background: radial-gradient(circle at 70% 70%, #2196F3 0%, transparent 50%);
+    animation-delay: -10s;
+}
+
+.layer-3 {
+    background: radial-gradient(circle at 50% 50%, #FF9800 0%, transparent 50%);
+    animation-delay: -15s;
+}
+
+@keyframes layer-move {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    100% {
+        transform: rotate(360deg) scale(1.2);
+    }
+}
+
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo i {
+    font-size: 40px;
+    color: var(--primary-color);
+    margin-right: 15px;
+}
+
+.logo h1 {
+    font-size: 28px;
+    color: var(--text-color);
+}
+
+.tagline {
+    margin-left: 55px;
+    color: var(--secondary-color);
+    font-style: italic;
+}
+
+.main-nav {
+    display: flex;
+}
+
+.nav-wrapper {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.nav-item:hover {
+    background: rgba(76, 175, 80, 0.1);
+    transform: translateY(-5px);
+}
+
+.nav-item i {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: var(--primary-color);
+}
+
+.main-content {
+    margin-top: 30px;
+}
+
+.section {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+.section.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.dashboard-card {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+}
+
+.card-header i {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-right: 15px;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: var(--light-text);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Additional sections styling */
+.section-content {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.input-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px 12px 12px 45px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.input-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.results-container {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+}
+
+.weather-input-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.forecast-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.forecast-day {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.fertilizer-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.fertilizer-table th, .fertilizer-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.fertilizer-table th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.active-link {
+    background: rgba(76, 175, 80, 0.2);
+    font-weight: bold;
+}
+
+.error {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+@media (max-width: 1024px) {
+    .main-header {
+        flex-direction: column;
+    }
+
+    .nav-wrapper {
+        margin-top: 20px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .weather-input-container {
+        flex-direction: column;
+    }
+}
