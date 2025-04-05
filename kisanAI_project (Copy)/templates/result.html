@@ -1,0 +1,59 @@
+<!-- templates/result.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 700px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        h2 {
+            color: #4CAF50;
+        }
+        .info {
+            margin-top: 1.5rem;
+        }
+        .info strong {
+            display: block;
+            margin-top: 1rem;
+        }
+        .back-btn {
+            margin-top: 2rem;
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Prediction Result</h2>
+        <img src="{{ result.image_url }}" alt="Uploaded Image">
+        <div class="info">
+            <strong>Condition:</strong> {{ result.condition }}
+            <strong>Confidence:</strong> {{ "%.2f"|format(result.confidence) }}%
+            <strong>Symptoms:</strong> {{ result.symptoms }}
+            <strong>Recommendations:</strong> {{ result.recommendations }}
+        </div>
+        <a class="back-btn" href="/upload.html">Upload Another</a>
+    </div>
+</body>
+</html>
