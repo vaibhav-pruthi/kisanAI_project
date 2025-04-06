@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GreenAI - Irrigation Prediction</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #000;
+    }
+
+    /* Top Navigation with Enhanced Hover Effects */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 5%;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: rgb(67, 245, 67);
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: #333;
+      margin-left: 20px;
+      font-weight: 500;
+      padding: 5px 0;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    
+    /* Underline hover effect for nav links */
+    nav a:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: #007BFF;
+      transition: width 0.3s ease;
+    }
+    
+    nav a:hover {
+      color: #007BFF;
+      text-decoration: none;
+    }
+    
+    nav a:hover:after {
+      width: 100%;
+    }
+    
+    .help-btn {
+      background-color: rgb(67, 220, 67);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .help-btn:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+    }
+
+    /* Irrigation Prediction Form */
+    .irrigation-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .irrigation-container h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #444;
+    }
+
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    .form-group input[type="range"] {
+      margin-top: 5px;
+    }
+
+    .value-display {
+      display: inline-block;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+
+    .predict-btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: block;
+      margin: 30px auto 0;
+      transition: all 0.3s ease;
+    }
+
+    .predict-btn:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(40,167,69,0.3);
+    }
+
+    /* Results Section */
+    .results-container {
+      margin-top: 30px;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+      display: none;
+    }
+
+    .results-container.show {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .results-heading {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .result-card {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      position: relative;
+      overflow: hidden;
+      border-left: 4px solid #28a745;
+    }
+
+    .result-card h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .result-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .detail-item {
+      margin-bottom: 8px;
+    }
+
+    .detail-label {
+      font-weight: 500;
+      color: #555;
+    }
+
+    .detail-value {
+      color: #333;
+    }
+
+    .recommendation {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f0f8ff;
+      border-radius: 4px;
+      border-left: 3px solid #007BFF;
+    }
+
+    /* Plant Growth Stage Icons */
+    .growth-stages {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: #f5f5f5;
+    }
+
+    .stage {
+      text-align: center;
+      padding: 10px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      opacity: 0.6;
+    }
+
+    .stage.active {
+      background-color: #e3f2fd;
+      opacity: 1;
+      transform: scale(1.05);
+      border: 1px solid #90caf9;
+    }
+
+    .stage-icon {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .stage-name {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .result-details {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header>
+    <div class="logo">GreenAI</div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/upload.html">Upload</a>
+      <a href="/weather.html">Weather</a>
+      <a href="/irrigation.html">Irrigation</a>
+      <button class="help-btn">Help</button>
+    </nav>
+  </header>
+
+  <!-- Irrigation Prediction Form -->
+  <section class="irrigation-container">
+    <h2>Irrigation Prediction</h2>
+    
+    <form id="irrigationForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="plantType">Plant Type</label>
+          <select id="plantType" required>
+            <option value="">Select a plant</option>
+            <!-- Options will be populated from JSON data -->
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="growthStage">Growth Stage</label>
+          <select id="growthStage" required>
+            <option value="">Select growth stage</option>
+            <!-- Options will be dynamically populated based on plant selection -->
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="soilType">Soil Type</label>
+          <select id="soilType" required>
+            <option value="sandy">Sandy</option>
+            <option value="loamy">Loamy</option>
+            <option value="clay">Clay</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="soilMoisture">Soil Moisture Level (%)</label>
+          <input type="range" id="soilMoisture" min="0" max="100" value="50" step="1">
+          <span id="soilMoistureValue" class="value-display">50%</span>
+        </div>
+        
+        <div class="form-group">
+          <label for="temperature">Temperature (°C)</label>
+          <input type="range" id="temperature" min="0" max="40" value="20" step="1">
+          <span id="temperatureValue" class="value-display">20°C</span>
+        </div>
+        
+        <div class="form-group">
+          <label for="humidity">Humidity (%)</label>
+          <input type="range" id="humidity" min="0" max="100" value="50" step="1">
+          <span id="humidityValue" class="value-display">50%</span>
+        </div>
+      </div>
+      
+      <button type="submit" class="predict-btn">Predict Irrigation Needs</button>
+    </form>
+    
+    <!-- Growth Stage Visual Indicator (shows up after plant selection) -->
+    <div class="growth-stages" id="growthStagesVisual" style="display: none;">
+      <!-- Will be dynamically populated -->
+    </div>
+    
+    <!-- Results Section -->
+    <div class="results-container" id="resultsContainer">
+      <h3 class="results-heading">Irrigation Recommendation</h3>
+      <div class="result-card">
+        <h3 id="resultPlantName">Plant Name</h3>
+        <div class="result-details">
+          <div class="detail-item">
+            <span class="detail-label">Next Watering:</span>
+            <span class="detail-value" id="nextWatering">In 2 days</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Water Amount:</span>
+            <span class="detail-value" id="waterAmount">400ml</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Growth Stage:</span>
+            <span class="detail-value" id="currentGrowthStage">Vegetative</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Soil Type:</span>
+            <span class="detail-value" id="currentSoilType">Loamy</span>
+          </div>
+        </div>
+        <div class="recommendation" id="wateringRecommendation">
+          Based on current conditions, your tomato plants need water in 2 days. The soil moisture is adequate for now.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Plant database
+    let plantData = {};
+    
+    // Fetch plant data when page loads
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        // Normally we would fetch this from an API endpoint, but for now we'll use the embedded data
+        plantData = {
+          "tomato": {
+            "name": "Tomato",
+            "scientific_name": "Solanum lycopersicum",
+            "water_needs": "medium-high",
+            "water_frequency": {
+              "seedling": {"days": 1, "amount_ml": 200},
+              "vegetative": {"days": 2, "amount_ml": 400},
+              "flowering": {"days": 2, "amount_ml": 600},
+              "fruiting": {"days": 1, "amount_ml": 800}
+            },
+            "temperature_factor": {
+              "low": 0.7,    
+              "optimal": 1,  
+              "high": 1.5    
+            },
+            "humidity_factor": {
+              "low": 1.3,    
+              "medium": 1,   
+              "high": 0.7    
+            },
+            "soil_type_factor": {
+              "sandy": 1.3,
+              "loamy": 1.0,
+              "clay": 0.8
+            },
+            "growth_info": {
+              "days_to_maturity": 70,
+              "ideal_temp_range": "18-29°C",
+              "ideal_soil_ph": "6.0-6.8"
+            }
+          },
+          "potato": {
+            "name": "Potato",
+            "scientific_name": "Solanum tuberosum",
+            "water_needs": "medium",
+            "water_frequency": {
+              "seedling": {"days": 2, "amount_ml": 200},
+              "vegetative": {"days": 3, "amount_ml": 300},
+              "flowering": {"days": 2, "amount_ml": 500},
+              "tuber_formation": {"days": 3, "amount_ml": 400}
+            },
+            "temperature_factor": {
+              "low": 0.6,
+              "optimal": 1,
+              "high": 1.4
+            },
+            "humidity_factor": {
+              "low": 1.2,
+              "medium": 1,
+              "high": 0.8
+            },
+            "soil_type_factor": {
+              "sandy": 1.2,
+              "loamy": 1.0,
+              "clay": 0.7
+            },
+            "growth_info": {
+              "days_to_maturity": 90,
+              "ideal_temp_range": "15-20°C",
+              "ideal_soil_ph": "5.0-6.0"
+            }
+          },
+          "bell_pepper": {
+            "name": "Bell Pepper",
+            "scientific_name": "Capsicum annuum",
+            "water_needs": "medium",
+            "water_frequency": {
+              "seedling": {"days": 1, "amount_ml": 200},
+              "vegetative": {"days": 2, "amount_ml": 350},
+              "flowering": {"days": 2, "amount_ml": 500},
+              "fruiting": {"days": 2, "amount_ml": 600}
+            },
+            "temperature_factor": {
+              "low": 0.6,
+              "optimal": 1,
+              "high": 1.4
+            },
+            "humidity_factor": {
+              "low": 1.3,
+              "medium": 1,
+              "high": 0.7
+            },
+            "soil_type_factor": {
+              "sandy": 1.2,
+              "loamy": 1.0,
+              "clay": 0.9
+            },
+            "growth_info": {
+              "days_to_maturity": 90,
+              "ideal_temp_range": "20-30°C",
+              "ideal_soil_ph": "5.5-7.0"
+            }
+          },
+          "spinach": {
+            "name": "Spinach",
+            "scientific_name": "Spinacia oleracea",
+            "water_needs": "medium",
+            "water_frequency": {
+              "seedling": {"days": 1, "amount_ml": 150},
+              "vegetative": {"days": 2, "amount_ml": 250},
+              "mature": {"days": 2, "amount_ml": 300}
+            },
+            "temperature_factor": {
+              "low": 0.9,
+              "optimal": 1,
+              "high": 1.7
+            },
+            "humidity_factor": {
+              "low": 1.3,
+              "medium": 1,
+              "high": 0.7
+            },
+            "soil_type_factor": {
+              "sandy": 1.3,
+              "loamy": 1.0,
+              "clay": 0.9
+            },
+            "growth_info": {
+              "days_to_maturity": 40,
+              "ideal_temp_range": "10-20°C",
+              "ideal_soil_ph": "6.0-7.5"
+            }
+          },
+          "strawberry": {
+            "name": "Strawberry",
+            "scientific_name": "Fragaria × ananassa",
+            "water_needs": "medium",
+            "water_frequency": {
+              "vegetative": {"days": 2, "amount_ml": 300},
+              "flowering": {"days": 1, "amount_ml": 400},
+              "fruiting": {"days": 1, "amount_ml": 500}
+            },
+            "temperature_factor": {
+              "low": 0.7,
+              "optimal": 1,
+              "high": 1.5
+            },
+            "humidity_factor": {
+              "low": 1.2,
+              "medium": 1,
+              "high": 0.8
+            },
+            "soil_type_factor": {
+              "sandy": 1.2,
+              "loamy": 1.0,
+              "clay": 1.1
+            },
+            "growth_info": {
+              "days_to_maturity": 60,
+              "ideal_temp_range": "15-26°C",
+              "ideal_soil_ph": "5.5-6.5"
+            }
+          },
+          "basil": {
+            "name": "Basil",
+            "scientific_name": "Ocimum basilicum",
+            "water_needs": "medium",
+            "water_frequency": {
+              "seedling": {"days": 1, "amount_ml": 150},
+              "vegetative": {"days": 2, "amount_ml": 250},
+              "mature": {"days": 2, "amount_ml": 300}
+            },
+            "temperature_factor": {
+              "low": 0.7,
+              "optimal": 1,
+              "high": 1.4
+            },
+            "humidity_factor": {
+              "low": 1.3,
+              "medium": 1,
+              "high": 0.7
+            },
+            "soil_type_factor": {
+              "sandy": 1.2,
+              "loamy": 1.0,
+              "clay": 1.1
+            },
+            "growth_info": {
+              "days_to_maturity": 30,
+              "ideal_temp_range": "18-30°C",
+              "ideal_soil_ph": "6.0-7.5"
+            }
+          },
+          "coriander": {
+            "name": "Coriander",
+            "scientific_name": "Coriandrum sativum",
+            "water_needs": "medium",
+            "water_frequency": {
+              "seedling": {"days": 1, "amount_ml": 150},
+              "vegetative": {"days": 2, "amount_ml": 250},
+              "mature": {"days": 3, "amount_ml": 300}
+            },
+            "temperature_factor": {
+              "low": 0.8,
+              "optimal": 1,
+              "high": 1.5
+            },
+            "humidity_factor": {
+              "low": 1.2,
+              "medium": 1,
+              "high": 0.8
+            },
+            "soil_type_factor": {
+              "sandy": 1.2,
+              "loamy": 1.0,
+              "clay": 1.1
+            },
+            "growth_info": {
+              "days_to_maturity": 45,
+              "ideal_temp_range": "10-24°C",
+              "ideal_soil_ph": "6.0-7.5"
+            }
+          }
+        };
+        
+        // Populate plant dropdown
+        const plantSelect = document.getElementById('plantType');
+        for (const [key, plant] of Object.entries(plantData)) {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = plant.name;
+          plantSelect.appendChild(option);
+        }
+        
+        // Setup event listeners
+        setupEventListeners();
+      } catch (error) {
+        console.error('Error loading plant data:', error);
+      }
+    });
+    
+    // Setup range sliders with value display
+    function setupEventListeners() {
+      // Update range slider values
+      document.getElementById('soilMoisture').addEventListener('input', function(e) {
+        document.getElementById('soilMoistureValue').textContent = e.target.value + '%';
+      });
+      
+      document.getElementById('temperature').addEventListener('input', function(e) {
+        document.getElementById('temperatureValue').textContent = e.target.value + '°C';
+      });
+      
+      document.getElementById('humidity').addEventListener('input', function(e) {
+        document.getElementById('humidityValue').textContent = e.target.value + '%';
+      });
+      
+      // Handle plant type selection
+      document.getElementById('plantType').addEventListener('change', function(e) {
+        updateGrowthStages(e.target.value);
+      });
+      
+      // Form submission
+      document.getElementById('irrigationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        calculateIrrigation();
+      });
+    }
+    
+    // Update growth stages based on plant selection
+    function updateGrowthStages(plantKey) {
+      if (!plantKey) return;
+      
+      const growthStageSelect = document.getElementById('growthStage');
+      const growthStagesVisual = document.getElementById('growthStagesVisual');
+      
+      // Clear previous options
+      growthStageSelect.innerHTML = '<option value="">Select growth stage</option>';
+      growthStagesVisual.innerHTML = '';
+      
+      // Get growth stages for the selected plant
+      const stages = Object.keys(plantData[plantKey].water_frequency);
+      
+      // Populate dropdown
+      stages.forEach(stage => {
+        const option = document.createElement('option');
+        option.value = stage;
+        option.textContent = stage.charAt(0).toUpperCase() + stage.slice(1);
+        growthStageSelect.appendChild(option);
+      });
+      
+      // Create visual growth stage indicators
+      stages.forEach(stage => {
+        const stageDiv = document.createElement('div');
+        stageDiv.className = 'stage';
+        stageDiv.dataset.stage = stage;
+        
+        const iconMap = {
+          'seedling': '🌱',
+          'vegetative': '🌿',
+          'flowering': '🌸',
+          'fruiting': '🍅',
+          'mature': '🌱',
+          'tuber_formation': '🥔'
+        };
+        
+        stageDiv.innerHTML = `
+          <div class="stage-icon">${iconMap[stage] || '🌱'}</div>
+          <div class="stage-name">${stage.charAt(0).toUpperCase() + stage.slice(1)}</div>
+        `;
+        
+        growthStagesVisual.appendChild(stageDiv);
+        
+        // Make stages clickable
+        stageDiv.addEventListener('click', function() {
+          growthStageSelect.value = stage;
+          updateActiveStage(stage);
+        });
+      });
+      
+      // Show the growth stages visual
+      growthStagesVisual.style.display = 'flex';
+      
+      // Update growth stage select listener
+      growthStageSelect.addEventListener('change', function(e) {
+        updateActiveStage(e.target.value);
+      });
+    }
+    
+    // Update active stage in visual indicator
+    function updateActiveStage(activeStage) {
+      if (!activeStage) return;
+      
+      const stages = document.querySelectorAll('.stage');
+      stages.forEach(stage => {
+        if (stage.dataset.stage === activeStage) {
+          stage.classList.add('active');
+        } else {
+          stage.classList.remove('active');
+        }
+      });
+    }
+    
+    // Calculate irrigation needs
+    function calculateIrrigation() {
+      // Get form values
+      const plantKey = document.getElementById('plantType').value;
+      const growthStage = document.getElementById('growthStage').value;
+      const soilType = document.getElementById('soilType').value;
+      const soilMoisture = parseInt(document.getElementById('soilMoisture').value);
+      const temperature = parseInt(document.getElementById('temperature').value);
+      const humidity = parseInt(document.getElementById('humidity').value);
+      
+      // Validate input
+      if (!plantKey || !growthStage) {
+        alert('Please select a plant and growth stage');
+        return;
+      }
+      
+      const plant = plantData[plantKey];
+      
+      // Get base watering information
+      const baseWaterFreq = plant.water_frequency[growthStage].days;
+      const baseWaterAmount = plant.water_frequency[growthStage].amount_ml;
+      
+      // Apply environmental factors
+      let tempFactor = 1;
+      if (temperature < 10) {
+        tempFactor = plant.temperature_factor.low;
+      } else if (temperature > 30) {
+        tempFactor = plant.temperature_factor.high;
+      } else {
+        tempFactor = plant.temperature_factor.optimal;
+      }
+      
+      let humidityFactor = 1;
+      if (humidity < 30) {
+        humidityFactor = plant.humidity_factor.low;
+      } else if (humidity > 70) {
+        humidityFactor = plant.humidity_factor.high;
+      } else {
+        humidityFactor = plant.humidity_factor.medium;
+      }
+      
+      const soilFactor = plant.soil_type_factor[soilType];
+      
+      // Calculate adjusted watering frequency based on soil moisture
+      let adjustedDays = baseWaterFreq * tempFactor * humidityFactor * soilFactor;
+      
+      // Soil moisture adjustment (lower moisture means water sooner)
+      const moistureAdjustment = 1 - ((100 - soilMoisture) / 100);
+      adjustedDays = adjustedDays * moistureAdjustment;
+      
+      // Make sure days is at least 0.5 (same day) and round to half days
+      adjustedDays = Math.max(0.5, adjustedDays);
+      adjustedDays = Math.round(adjustedDays * 2) / 2;
+      
+      // Adjust water amount based on factors
+      let adjustedAmount = baseWaterAmount * (1/tempFactor) * (1/humidityFactor) * (1/soilFactor);
+      adjustedAmount = Math.round(adjustedAmount);
+      
+      // Display results
+      document.getElementById('resultPlantName').textContent = plant.name;
+      document.getElementById('nextWatering').textContent = formatDays(adjustedDays);
+      document.getElementById('waterAmount').textContent = `${adjustedAmount}ml`;
+      document.getElementById('currentGrowthStage').textContent = growthStage.charAt(0).toUpperCase() + growthStage.slice(1);
+      document.getElementById('currentSoilType').textContent = soilType.charAt(0).toUpperCase() + soilType.slice(1);
+      
+      // Create recommendation text
+      let recommendation = `Based on current conditions (${temperature}°C, ${humidity}% humidity, ${soilMoisture}% soil moisture), `;
+      
+      if (adjustedDays <= 0.5) {
+        recommendation += `your ${plant.name} plants need water today. `;
+      } else if (adjustedDays <= 1) {
+        recommendation += `your ${plant.name} plants need water tomorrow. `;
+      } else {
+        recommendation += `your ${plant.name} plants need water in ${formatDays(adjustedDays)}. `;
+      }
+      
+      // Add ideal conditions
+      recommendation += `For optimal growth, maintain temperatures between ${plant.growth_info.ideal_temp_range} and soil pH of ${plant.growth_info.ideal_soil_ph}.`;
+      
+      document.getElementById('wateringRecommendation').textContent = recommendation;
+      
+      // Show results
+      document.getElementById('resultsContainer').classList.add('show');
+      
+      // Scroll to results
+      document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Format days for display
+    function formatDays(days) {
+      if (days === 0.5) return 'later today';
+      if (days === 1) return 'tomorrow';
+      if (days === 1.5) return 'tomorrow afternoon';
+      return `${Math.floor(days)} day${Math.floor(days) !== 1 ? 's' : ''}`;
+    }
+  </script>
+</body>
+</html>

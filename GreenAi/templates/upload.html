@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GreenAI - Upload</title>
+  <style>
+    /* All existing CSS remains the same */
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f8fa;
+      color: #000;
+    }
+
+    /* Top Navigation with Enhanced Hover Effects */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 5%;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: rgb(66, 220, 66);
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: #333;
+      margin-left: 20px;
+      font-weight: 500;
+      padding: 5px 0;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    
+    /* Underline hover effect for nav links */
+    nav a:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: #007BFF;
+      transition: width 0.3s ease;
+    }
+    
+    nav a:hover {
+      color: #007BFF;
+      text-decoration: none;
+    }
+    
+    nav a:hover:after {
+      width: 100%;
+    }
+    
+    .help-btn {
+      background-color: rgb(67, 220, 67);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .help-btn:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+    }
+
+    /* Main Content Area */
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* Upload Section */
+    .upload-section {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      padding: 40px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .upload-section h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .upload-section p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 30px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Upload Area */
+    .upload-area {
+      border: 2px dashed #aac;
+      border-radius: 10px;
+      padding: 50px 20px;
+      background-color: #f8faff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 30px;
+    }
+
+    .upload-area:hover {
+      border-color: #007BFF;
+      background-color: #f0f8ff;
+    }
+
+    .upload-area.active {
+      border-color: #007BFF;
+      background-color: #e6f4ff;
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      color: #007BFF;
+      margin-bottom: 15px;
+    }
+
+    .upload-text {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .upload-subtext {
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    /* File Input */
+    #file-input {
+      display: none;
+    }
+
+    /* Preview Area */
+    .preview-area {
+      display: none;
+      margin: 30px auto;
+      max-width: 500px;
+    }
+
+    .preview-area img {
+      max-width: 100%;
+      max-height: 400px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .preview-info {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    /* Results Area */
+    .results-area {
+      display: none;
+      margin: 30px auto;
+      max-width: 600px;
+      background-color: #f8faff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+
+    .results-header {
+      font-size: 1.3rem;
+      color: #333;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    .condition-name {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .confidence-bar {
+      width: 100%;
+      height: 10px;
+      background-color: #e9ecef;
+      border-radius: 5px;
+      margin: 5px 0;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background-color: #007BFF;
+      border-radius: 5px;
+    }
+
+    .high-confidence {
+      background-color: #dc3545;
+    }
+
+    .medium-confidence {
+      background-color: #ffc107;
+    }
+
+    .low-confidence {
+      background-color: #28a745;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: none;
+      margin: 20px auto;
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(0,123,255,.3);
+      border-radius: 50%;
+      border-top-color: #007BFF;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Button Styles */
+    .btn {
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,123,255,0.4);
+    }
+
+    .btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      margin-right: 10px;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    /* Disclaimer banner */
+    .disclaimer-banner {
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    /* Instructions Section */
+    .instructions {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      padding: 30px;
+    }
+
+    .instructions h2 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .instruction-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .instruction-card {
+      flex: 1 1 300px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .instruction-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      border-left: 3px solid #007BFF;
+    }
+
+    .instruction-card h3 {
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .instruction-card p {
+      font-size: 0.95rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      color: #777;
+      font-size: 0.9rem;
+    }
+
+    /* Recommendations Styling */
+    .recommendations-section {
+      margin-top: 30px;
+      background-color: #f0f8ff;
+      border-radius: 8px;
+      padding: 20px;
+      border-left: 4px solid #007BFF;
+    }
+
+    .recommendations-header {
+      font-size: 1.2rem;
+      color: #0056b3;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .recommendation-item {
+      margin-bottom: 15px;
+    }
+
+    .recommendation-label {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .recommendation-content {
+      color: #555;
+      line-height: 1.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 15px;
+        margin: 20px auto;
+      }
+      
+      .upload-section {
+        padding: 30px 15px;
+      }
+      
+      .upload-section h1 {
+        font-size: 1.7rem;
+      }
+      
+      .upload-area {
+        padding: 30px 15px;
+      }
+      
+      .instructions {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header>
+    <div class="logo">GreenAI</div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/upload.html">Upload</a>
+      <a href="/weather.html">Weather</a>
+      <a href="/irrigation.html">Irrigation</a>
+      <button class="help-btn">About Us</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- Upload Section -->
+    <section class="upload-section">
+      <h1>Upload Your leaf Image</h1>
+      <p>Our AI will analyze your image and provide insights about potential diseases . Please upload a clear, well-lit photo of the affected area.</p>
+      
+      <!-- Upload Area -->
+      <div class="upload-area" id="drop-area">
+        <div class="upload-icon">📤</div>
+        <div class="upload-text">Drag & Drop your image here</div>
+        <div class="upload-subtext">or click to browse files</div>
+        <input type="file" id="file-input" accept="image/*">
+      </div>
+      
+      <!-- Preview Area (initially hidden) -->
+      <div class="preview-area" id="preview-area">
+        <img id="preview-image" src="#" alt="Preview">
+        <div class="preview-info" id="file-info">File information will appear here</div>
+        <div style="margin-top: 20px;">
+          <button class="btn btn-secondary" id="cancel-btn">Cancel</button>
+          <button class="btn" id="analyze-btn">Analyze Image</button>
+        </div>
+      </div>
+      
+      <!-- Loading Spinner -->
+      <div class="spinner" id="loading-spinner"></div>
+      
+      <!-- Results Area (initially hidden) -->
+      <div class="results-area" id="results-area">
+        <div class="results-header">Analysis Results</div>
+        <div id="results-content"></div>
+        
+        <!-- Recommendations Section (added) -->
+        <div class="recommendations-section" id="recommendations-section" style="display: none;">
+          <div class="recommendations-header">Treatment Recommendations</div>
+          <div id="recommendations-content"></div>
+        </div>
+        
+        <div class="disclaimer-banner">
+          This analysis is for informational purposes only and should not replace professional advice.
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+          <button class="btn btn-secondary" id="new-upload-btn">Upload New Image</button>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Instructions Section -->
+    <section class="instructions">
+      <h2>Best Practices for Accurate Results</h2>
+      <div class="instruction-cards">
+        <!-- Instruction 1 -->
+        <div class="instruction-card">
+          <h3>Good Lighting</h3>
+          <p>Ensure your photo is taken in bright, natural light. Avoid shadows or harsh lighting that might distort colors or details.</p>
+        </div>
+        <!-- Instruction 2 -->
+        <div class="instruction-card">
+          <h3>Clear Focus</h3>
+          <p>Take a clear, in-focus image of the affected area. Blurry images may lead to inaccurate results.</p>
+        </div>
+        <!-- Instruction 3 -->
+        <div class="instruction-card">
+          <h3>Proper Distance</h3>
+          <p>Capture the image from about 6-12 inches away to show sufficient detail while maintaining context of the affected area.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropArea = document.getElementById('drop-area');
+      const fileInput = document.getElementById('file-input');
+      const previewArea = document.getElementById('preview-area');
+      const previewImage = document.getElementById('preview-image');
+      const fileInfo = document.getElementById('file-info');
+      const cancelBtn = document.getElementById('cancel-btn');
+      const analyzeBtn = document.getElementById('analyze-btn');
+      const loadingSpinner = document.getElementById('loading-spinner');
+      const resultsArea = document.getElementById('results-area');
+      const resultsContent = document.getElementById('results-content');
+      const recommendationsSection = document.getElementById('recommendations-section');
+      const recommendationsContent = document.getElementById('recommendations-content');
+      const newUploadBtn = document.getElementById('new-upload-btn');
+      
+      // Disease recommendations data from CSV
+      const diseaseRecommendations = [
+        {disease:"Apple___Apple_scab",symptoms:"Olive-green spots on leaves and fruit, leading to deformation and cracking",causes:"Fungus Venturia inaequalis, spread by wind and rain",management:"Use resistant varieties (Enterprise, Liberty), apply fungicides (captan, mancozeb), remove fallen leaves",fertilizer:"Balanced NPK (10-10-10)",tip:"Ensure proper drainage and air circulation."},
+        {disease:"Apple___Black_rot",symptoms:"Dark sunken lesions on fruit, leaf yellowing, cankers on branches",causes:"Fungus Botryosphaeria obtusa, thrives in warm, humid conditions",management:"Prune infected branches, apply fungicides (thiophanate-methyl, copper), improve orchard ventilation",fertilizer:"Compost + Phosphorus-rich",tip:"Avoid overhead watering; prune regularly."},
+        {disease:"Apple___Cedar_apple_rust",symptoms:"Bright orange spots on leaves, can cause premature defoliation",causes:"Fungus Gymnosporangium juniperi-virginianae, requires both apple and juniper hosts",management:"Remove nearby junipers, apply fungicides (myclobutanil, propiconazole) at bud break",fertilizer:"Well-rotted manure",tip:"Keep foliage dry and space plants properly."},
+        {disease:"Apple___healthy",symptoms:"No symptoms",causes:"",management:"Maintain proper orchard hygiene, use balanced fertilizers",fertilizer:"General-purpose fertilizer",tip:"Monitor plant health weekly."},
+        {disease:"Pepper__bell___Bacterial_spot",symptoms:"Water-soaked spots on leaves and fruit, dark sunken lesions",causes:"Xanthomonas campestris, spread by rain splash and contaminated tools",management:"Use disease-free seeds, apply copper-based sprays, practice crop rotation",fertilizer:"Low-nitrogen fertilizer",tip:"Rotate crops and avoid overcrowding."},
+        {disease:"Pepper__bell___healthy",symptoms:"No symptoms",causes:"",management:"Proper watering (avoid wetting leaves), good air circulation",fertilizer:"Calcium-rich fertilizer",tip:"Disinfect tools and remove debris."},
+        {disease:"Potato___Early_blight",symptoms:"Small brown spots with yellow halos, progressing to larger lesions",causes:"Fungus Alternaria solani, survives in soil and plant debris",management:"Rotate crops, use resistant varieties (Russet Burbank), apply chlorothalonil or mancozeb fungicides",fertilizer:"Copper fungicide support",tip:"Apply fungicide early in the season."},
+        {disease:"Potato___Late_blight",symptoms:"Large dark lesions on leaves, white mold growth on undersides, rapid plant death",causes:"Phytophthora infestans, thrives in cool, humid conditions",management:"Destroy infected plants, use copper fungicides, avoid overhead watering",fertilizer:"Organic compost",tip:"Use certified disease-free seeds."},
+        {disease:"Potato___healthy",symptoms:"No symptoms",causes:"",management:"Ensure proper drainage, use disease-free tubers",fertilizer:"Potassium-enriched fertilizer",tip:"Improve soil with organic matter."},
+        {disease:"Rice_Bacterial_blight",symptoms:"Yellowing and drying of leaves, wilting",causes:"Xanthomonas oryzae, spreads through infected seeds and water",management:"Use resistant varieties (IRBB21), avoid over-fertilization, practice field sanitation",fertilizer:"Fungus-resistant blend",tip:"Water at the base, not on leaves."},
+        {disease:"Rice_Brown_spot",symptoms:"Brown circular lesions with yellow halos on leaves",causes:"Fungus Cochliobolus miyabeanus, thrives in nutrient-deficient soils",management:"Improve soil nutrition (add potassium and nitrogen), apply fungicides (propiconazole)",fertilizer:"Sulfur-based supplement",tip:"Sanitize equipment after pruning."},
+        {disease:"Rice_Healthy",symptoms:"No symptoms",causes:"",management:"Maintain proper irrigation, avoid excessive nitrogen application",fertilizer:"Nitrogen-rich for recovery",tip:"Use mulch to prevent splash-up infection."},
+        {disease:"Rice_Leaf_smut",symptoms:"Black streaks and small smut balls on leaves",causes:"Entyloma oryzae, spread by wind and rain",management:"Use certified seeds, practice crop rotation, remove infected plant debris",fertilizer:"Neem cake",tip:"Introduce beneficial insects."},
+        {disease:"Tomato_Bacterial_spot",symptoms:"Small water-soaked spots on leaves, leading to wilting and defoliation",causes:"Xanthomonas bacteria, spread by rain and contaminated tools",management:"Use disease-free seeds, apply copper-based bactericides, avoid overhead watering",fertilizer:"Calcium nitrate",tip:"Don't overwater; check soil moisture."},
+        {disease:"Tomato_Early_blight",symptoms:"Brown concentric rings on leaves and stems, premature leaf drop",causes:"Alternaria solani, persists in soil and plant debris",management:"Mulching, apply fungicides (chlorothalonil, mancozeb), rotate crops",fertilizer:"General-purpose fertilizer",tip:"Ensure at least 6 hrs of sunlight."},
+        {disease:"Tomato_Late_blight",symptoms:"Water-soaked lesions, white fungal growth on leaf undersides, fruit rot",causes:"Phytophthora infestans, spreads in humid conditions",management:"Remove infected plants, use fungicides (copper, metalaxyl)",fertilizer:"Zinc and Boron mix",tip:"Test soil pH and adjust as needed."},
+        {disease:"Tomato_Leaf_Mold",symptoms:"Yellow patches on upper leaf surface, fuzzy gray mold on undersides",causes:"Passalora fulva, thrives in humid environments",management:"Increase air circulation, apply fungicides (chlorothalonil)",fertilizer:"Mulch and compost",tip:"Avoid nitrogen overload."},
+        {disease:"Tomato_healthy",symptoms:"No symptoms",causes:"",management:"Balanced fertilization, proper spacing for airflow",fertilizer:"Low-nitrogen fertilizer",tip:"Promote biodiversity in the garden."}
+      ];
+
+      // Open file browser when clicking the upload area
+      dropArea.addEventListener('click', () => {
+        fileInput.click();
+      });
+      
+      // Handle file selection
+      fileInput.addEventListener('change', handleFiles);
+      
+      // Prevent default drag behaviors
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      // Highlight drop area when dragging over it
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+      });
+      
+      // Handle dropped files
+      dropArea.addEventListener('drop', handleDrop, false);
+      
+      // Cancel button functionality
+      cancelBtn.addEventListener('click', () => {
+        resetUpload();
+      });
+      
+      // New upload button functionality
+      newUploadBtn.addEventListener('click', () => {
+        resetAnalysis();
+      });
+      
+      // Analyze button functionality - send to Flask backend
+      analyzeBtn.addEventListener('click', () => {
+        if (!fileInput.files[0]) return;
+        
+        // Show loading spinner
+        previewArea.style.display = 'none';
+        loadingSpinner.style.display = 'block';
+        
+        // Create form data
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        
+        // Send request to backend
+        fetch('/api/analyze', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Hide loading spinner
+          loadingSpinner.style.display = 'none';
+          
+          // Display results
+          displayResults(data);
+          
+          // Display recommendations for the detected disease
+          displayRecommendations(data.condition);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          loadingSpinner.style.display = 'none';
+          alert('Error analyzing image. Please try again.');
+          previewArea.style.display = 'block';
+        });
+      });
+      
+      // Functions
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      function highlight() {
+        dropArea.classList.add('active');
+      }
+      
+      function unhighlight() {
+        dropArea.classList.remove('active');
+      }
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+      }
+      
+      function handleFiles(e) {
+        const files = this.files || e;
+        if (files && files[0]) {
+          const file = files[0];
+          
+          // Check if it's an image
+          if (!file.type.match('image.*')) {
+            alert('Please upload an image file');
+            return;
+          }
+          
+          // Display file info
+          const size = (file.size / 1024).toFixed(2);
+          fileInfo.textContent = `${file.name} (${size} KB)`;
+          
+          // Show preview
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            dropArea.style.display = 'none';
+            previewArea.style.display = 'block';
+          }
+          reader.readAsDataURL(file);
+        }
+      }
+      
+      function resetUpload() {
+        fileInput.value = '';
+        previewImage.src = '#';
+        previewArea.style.display = 'none';
+        dropArea.style.display = 'block';
+      }
+      
+      function resetAnalysis() {
+        resultsArea.style.display = 'none';
+        recommendationsSection.style.display = 'none';
+        resetUpload();
+      }
+      
+      function getConfidenceClass(confidence) {
+        if (confidence > 70) return 'high-confidence';
+        if (confidence > 40) return 'medium-confidence';
+        return 'low-confidence';
+      }
+      
+      function displayResults(data) {
+        // Clear previous results
+        resultsContent.innerHTML = '';
+        
+        if (data.error) {
+          resultsContent.innerHTML = `<p>Error: ${data.error}</p>`;
+          resultsArea.style.display = 'block';
+          return;
+        }
+        
+        // Create main condition result
+        const mainResult = document.createElement('div');
+        mainResult.innerHTML = `
+          <h3>Primary Analysis: ${data.condition}</h3>
+          <p>Confidence: ${data.confidence.toFixed(1)}%</p>
+          <div class="confidence-bar">
+            <div class="confidence-fill ${getConfidenceClass(data.confidence)}" style="width: ${data.confidence}%"></div>
+          </div>
+          <hr style="margin: 15px 0;">
+          <h4>All Detected Possibilities:</h4>
+        `;
+        resultsContent.appendChild(mainResult);
+        
+        // Create list of all probabilities
+        const sortedConditions = Object.entries(data.all_probabilities)
+          .sort((a, b) => b[1] - a[1]);
+        
+        sortedConditions.forEach(([condition, probability]) => {
+          const item = document.createElement('div');
+          item.className = 'result-item';
+          item.innerHTML = `
+            <span class="condition-name">${condition}</span>
+            <span>${probability.toFixed(1)}%</span>
+            <div class="confidence-bar">
+              <div class="confidence-fill ${getConfidenceClass(probability)}" style="width: ${probability}%"></div>
+            </div>
+          `;
+          resultsContent.appendChild(item);
+        });
+        
+        // Show results area
+        resultsArea.style.display = 'block';
+      }
+      
+      // Function to display recommendations based on disease
+      function displayRecommendations(diseaseName) {
+        // Find the disease in our recommendations data
+        const diseaseData = diseaseRecommendations.find(item => item.disease === diseaseName);
+        
+        // Clear previous recommendations
+        recommendationsContent.innerHTML = '';
+        
+        if (diseaseData) {
+          // Create sections for each recommendation type
+          const recommendationHTML = `
+            <div class="recommendation-item">
+              <span class="recommendation-label">Symptoms:</span>
+              <p class="recommendation-content">${diseaseData.symptoms}</p>
+            </div>
+            
+            ${diseaseData.causes ? `
+            <div class="recommendation-item">
+              <span class="recommendation-label">Causes:</span>
+              <p class="recommendation-content">${diseaseData.causes}</p>
+            </div>
+            ` : ''}
+            
+            <div class="recommendation-item">
+              <span class="recommendation-label">Management:</span>
+              <p class="recommendation-content">${diseaseData.management}</p>
+            </div>
+            
+            <div class="recommendation-item">
+              <span class="recommendation-label">Recommended Fertilizer:</span>
+              <p class="recommendation-content">${diseaseData.fertilizer}</p>
+            </div>
+            
+            <div class="recommendation-item">
+              <span class="recommendation-label">Pro Tip:</span>
+              <p class="recommendation-content">${diseaseData.tip}</p>
+            </div>
+          `;
+          
+          recommendationsContent.innerHTML = recommendationHTML;
+          recommendationsSection.style.display = 'block';
+        } else {
+          // If no recommendations found
+          recommendationsContent.innerHTML = `
+            <p>No specific recommendations available for ${diseaseName}.</p>
+            <p>For general plant health, ensure proper watering, adequate sunlight, and regular monitoring for pests and diseases.</p>
+          `;
+          recommendationsSection.style.display = 'block';
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

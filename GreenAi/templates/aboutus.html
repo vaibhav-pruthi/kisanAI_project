@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - AI Gardening Assistant</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f9f4;
+            color: #2e4d2f;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        h1, h2 {
+            color: #2e7d32;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        ul {
+            list-style-type: square;
+            padding-left: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #e0f2e9;
+            margin-top: 40px;
+        }
+        .image-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            border: 2px dashed #2e7d32;
+            background-color: #ffffff;
+        }
+        .image-placeholder {
+            color: #999;
+            font-style: italic;
+            width: 600px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #bbb;
+            margin: 0 auto;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 About Us</h1>
+        <div class="image-section">
+            <img src="{{ url_for('static', filename='images/images.jpeg') }}" alt="Gardening Assistant" width="600" height="300" style="border: 2px dashed #2e7d32; background-color: #f9f9f9;" />
+        </div>
+        <p>Welcome to our <strong>AI Personal Gardening Assistant</strong> — your smart companion for cultivating healthy, thriving plants in any setting!</p>
+        <p>Whether you're managing a <strong>personal kitchen garden</strong>, running a <strong>nursery</strong>, overseeing a <strong>small-scale farm</strong>, or operating a <strong>greenhouse</strong>, our intelligent assistant is designed to make plant care easier, more efficient, and more informed.</p>
+
+        <div class="section">
+            <h2>🌿 What We Do</h2>
+            <ul>
+                <li><strong>🌾 Plant Disease Detection:</strong> Upload an image and our AI identifies potential plant diseases, providing:
+                    <ul>
+                        <li>Disease Name</li>
+                        <li>Symptoms</li>
+                        <li>Causes</li>
+                        <li>Recommended Treatments</li>
+                    </ul>
+                </li>
+                <li><strong>💧 Smart Irrigation Prediction:</strong> Predicts water requirements based on:
+                    <ul>
+                        <li>Soil Type</li>
+                        <li>Soil Moisture</li>
+                        <li>Plant Type</li>
+                        <li>Environmental Factors</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🧠 Behind the Tech</h2>
+            <p>We trained our disease detection model using the trusted <strong>PlantVillage dataset</strong> and deployed it using <strong>EfficientNet</strong>, a high-performance deep learning model optimized for accuracy and speed.</p>
+            <p>Our irrigation prediction system uses a range of features and modeling techniques to help your plants stay hydrated just right.</p>
+        </div>
+
+        <div class="section">
+            <h2>🌍 Our Vision</h2>
+            <p>We aim to bridge the gap between technology and nature — empowering everyone from home gardeners to agricultural enthusiasts to care for plants with confidence and precision.</p>
+            <p><strong>Together, let's grow smarter.</strong> 🌻</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 AI Gardening Assistant. All rights reserved.</p>
+    </div>
+</body>
+</html>
